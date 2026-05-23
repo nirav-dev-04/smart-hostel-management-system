@@ -45,10 +45,10 @@ public class FileUploadServiceImpl implements FileUploadService {
             throw new ValidationException("Cannot upload empty file!");
         }
 
-        // Validate image content type
+        // Validate image or video content type
         String contentType = file.getContentType();
-        if (contentType == null || !contentType.startsWith("image/")) {
-            throw new ValidationException("Only image uploads are allowed!");
+        if (contentType == null || (!contentType.startsWith("image/") && !contentType.startsWith("video/"))) {
+            throw new ValidationException("Only image and video uploads are allowed!");
         }
 
         String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
@@ -59,10 +59,10 @@ public class FileUploadServiceImpl implements FileUploadService {
             fileExtension = originalFilename.substring(i);
         }
 
-        // Validate standard image extensions
-        List<String> allowedExtensions = Arrays.asList(".jpg", ".jpeg", ".png", ".gif", ".webp");
+        // Validate standard image and video extensions
+        List<String> allowedExtensions = Arrays.asList(".jpg", ".jpeg", ".png", ".gif", ".webp", ".mp4", ".mov", ".webm", ".ogg", ".m4v");
         if (!allowedExtensions.contains(fileExtension.toLowerCase())) {
-            throw new ValidationException("Unsupported image format! Allowed formats: JPG, JPEG, PNG, GIF, WEBP.");
+            throw new ValidationException("Unsupported file format! Allowed formats: JPG, JPEG, PNG, GIF, WEBP, MP4, MOV, WEBM, OGG, M4V.");
         }
 
         try {

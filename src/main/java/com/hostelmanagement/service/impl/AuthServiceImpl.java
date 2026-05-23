@@ -125,11 +125,16 @@ public class AuthServiceImpl implements AuthService {
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
         String roleName = userPrincipal.getAuthorities().iterator().next().getAuthority().replace("ROLE_", "");
 
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
+        UserResponse userResponse = UserMapper.toResponse(user);
+
         return AuthResponse.builder()
                 .token(jwt)
                 .role(roleName)
                 .userId(userPrincipal.getId())
                 .name(userPrincipal.getName())
+                .user(userResponse)
                 .build();
     }
 }

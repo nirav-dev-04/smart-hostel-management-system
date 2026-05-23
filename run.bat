@@ -12,6 +12,8 @@ echo.
 set DB_URL=jdbc:postgresql://ep-broad-mode-aqw37f7q-pooler.c-8.us-east-1.aws.neon.tech/neondb?sslmode=require
 set DB_USERNAME=neondb_owner
 set DB_PASSWORD=npg_6hQszRK3AtTr
+set PORT=9001
+set JWT_SECRET=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
 :: -------------------------------------------------------
 
 echo Connecting to database: %DB_URL%

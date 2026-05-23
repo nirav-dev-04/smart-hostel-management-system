@@ -84,6 +84,13 @@ public class AdminController {
         return ResponseEntity.ok(ApiResponse.success("Analytics retrieved successfully", response));
     }
 
+    @GetMapping("/api/admin/complaints")
+    @Operation(summary = "View all complaints", description = "Retrieves a listing of all registered complaints across all hostel blocks.")
+    public ResponseEntity<ApiResponse<List<ComplaintResponse>>> getAllComplaints() {
+        List<ComplaintResponse> response = complaintService.getAllComplaints();
+        return ResponseEntity.ok(ApiResponse.success("All complaints fetched successfully", response));
+    }
+
     @GetMapping("/api/admin/audit-logs")
     @Operation(summary = "Retrieve System Audit Logs", description = "Returns a chronological timeline of all state transitions and system modifications.")
     public ResponseEntity<ApiResponse<List<AuditLogResponse>>> getAuditLogs() {
