@@ -37,6 +37,13 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponse.success("Login successful", response));
     }
 
+    @PostMapping("/api/auth/google")
+    @Operation(summary = "Authenticate a User via Google SSO", description = "Accepts Google email and signs in the user, returning a Bearer JWT Token.")
+    public ResponseEntity<ApiResponse<AuthResponse>> googleLogin(@RequestBody java.util.Map<String, String> request) {
+        AuthResponse response = authService.googleLogin(request);
+        return ResponseEntity.ok(ApiResponse.success("Google login successful", response));
+    }
+
     @GetMapping("/api/users/me")
     @Operation(summary = "Get current authenticated User profile", description = "Retrieves details of the currently logged-in student/rector/admin.")
     public ResponseEntity<ApiResponse<UserResponse>> getMe() {

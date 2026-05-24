@@ -9,4 +9,5 @@ public interface AuthService {
     AuthResponse register(RegisterRequest request);
     AuthResponse login(LoginRequest request);
     UserResponse getMe(String email);
+    AuthResponse googleLogin(java.util.Map<String, String> request);
 }

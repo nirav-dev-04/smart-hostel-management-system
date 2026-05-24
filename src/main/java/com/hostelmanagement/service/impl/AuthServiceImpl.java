@@ -114,6 +114,41 @@ public class AuthServiceImpl implements AuthService {
         return UserMapper.toResponse(user);
     }
 
+    @Override
+    @Transactional
+    public AuthResponse googleLogin(java.util.Map<String, String> request) {
+        String email = request.get("email");
+        if (email == null || email.trim().isEmpty()) {
+            throw new com.hostelmanagement.exception.ValidationException("Google email is required");
+        }
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Google account not registered: " + email));
+
+        if (!user.getIsActive()) {
+            throw new com.hostelmanagement.exception.UnauthorizedException("User account is inactive");
+        }
+
+        // Bypass password check because they signed in via authentic Google identity popup
+        UserDetailsImpl userPrincipal = UserDetailsImpl.build(user);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userPrincipal, null, userPrincipal.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtUtils.generateJwtToken(authentication);
+
+        String roleName = userPrincipal.getAuthorities().iterator().next().getAuthority().replace("ROLE_", "");
+        UserResponse userResponse = UserMapper.toResponse(user);
+
+        auditLogService.logAction("USER_GOOGLE_LOGIN", null, email, email);
+
+        return AuthResponse.builder()
+                .token(jwt)
+                .role(roleName)
+                .userId(user.getId())
+                .name(user.getName())
+                .user(userResponse)
+                .build();
+    }
+
     private AuthResponse authenticateAndBuildResponse(String email, String password) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(email, password)
