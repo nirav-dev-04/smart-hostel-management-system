@@ -97,4 +97,29 @@ public class AdminController {
         List<AuditLogResponse> response = auditLogService.getAllLogs();
         return ResponseEntity.ok(ApiResponse.success("Audit logs retrieved successfully", response));
     }
+
+    @GetMapping("/api/admin/debug-uploads")
+    public ResponseEntity<ApiResponse<List<String>>> debugUploads() {
+        try {
+            java.io.File folder = new java.io.File("./uploads").getAbsoluteFile();
+            java.io.File[] listOfFiles = folder.listFiles();
+            List<String> files = new java.util.ArrayList<>();
+            files.add("Uploads Folder absolute path: " + folder.getAbsolutePath());
+            files.add("Uploads Folder exists: " + folder.exists());
+            if (listOfFiles != null) {
+                for (java.io.File file : listOfFiles) {
+                    if (file.isFile()) {
+                        files.add(file.getName() + " (Size: " + file.length() + " bytes)");
+                    }
+                }
+            } else {
+                files.add("Folder listFiles() returned null");
+            }
+            return ResponseEntity.ok(ApiResponse.success("Debug info fetched", files));
+        } catch (Exception e) {
+            List<String> errList = new java.util.ArrayList<>();
+            errList.add("Debug failed: " + e.getMessage());
+            return ResponseEntity.ok(ApiResponse.success("Debug failed", errList));
+        }
+    }
 }
